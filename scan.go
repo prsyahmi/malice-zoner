@@ -84,7 +84,7 @@ func AvScan(timeout int) Zoner {
 	defer cancel()
 
 	// start service
-	assert(startZavService(ctx))
+	startZavService(ctx)
 
 	results, err := utils.RunCommand(ctx, "zavcli", path)
 	log.WithFields(log.Fields{
