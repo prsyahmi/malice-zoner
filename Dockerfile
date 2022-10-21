@@ -9,6 +9,12 @@ RUN go get -u github.com/golang/dep/cmd/dep && dep ensure
 RUN go build -ldflags "-s -w -X main.Version=v$(cat VERSION) -X main.BuildTime=$(date -u +%Y%m%d)" -o /bin/avscan
 
 ####################################################
+# IMPORT OLD DATABASE
+####################################################
+
+FROM malice/zoner:0.1.0 as old_zoner
+
+####################################################
 # PLUGIN BUILDER
 ####################################################
 FROM ubuntu:bionic
@@ -61,6 +67,8 @@ RUN if [ "x$ZONE_KEY" != "x" ]; then \
 ADD http://www.eicar.org/download/eicar.com.txt /malware/EICAR
 
 COPY --from=go_builder /bin/avscan /bin/avscan
+COPY --from=old_zoner /opt/zav/lib/main.zdb /opt/zav/lib/main.zdb
+COPY --from=old_zoner /opt/zav/lib/zavdupd.ver /opt/zav/lib/zavdupd.ver
 
 WORKDIR /malware
 
